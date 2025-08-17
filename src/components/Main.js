@@ -1,9 +1,13 @@
-import React from 'react'
+// components/Main.js
+import React from 'react';
+import './Main.css';
 
-const Main = () => {
+const Main = ({ children }) => {
     return (
-        <div>Main</div>
-    )
-}
+        <main className="main">
+            {children}
+        </main>
+    );
+};
 
-export default Main
+export default Main;
