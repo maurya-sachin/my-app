@@ -990,3 +990,159 @@ ol {
 		font-size: 2.5rem;
 	}
 }
+
+/* ConfirmationPage.css */
+.confirmation-page {
+	min-height: 80vh;
+	padding: 60px 0;
+	background-color: #edefee;
+}
+
+.confirmation-content {
+	max-width: 600px;
+	margin: 0 auto;
+	background-color: #ffffff;
+	padding: 2rem;
+	border-radius: 16px;
+	box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+
+.confirmation-header {
+	margin-bottom: 2rem;
+}
+
+.success-icon {
+	width: 80px;
+	height: 80px;
+	background-color: #4caf50;
+	color: #ffffff;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 2rem;
+	font-weight: bold;
+	margin: 0 auto 1rem;
+}
+
+.confirmation-header h1 {
+	font-family: 'Markazi Text', serif;
+	font-size: 2.5rem;
+	color: #495e57;
+	margin-bottom: 0.5rem;
+}
+
+.confirmation-header p {
+	font-family: 'Karla', sans-serif;
+	color: #495e57;
+	font-size: 1.125rem;
+}
+
+.reservation-details {
+	background-color: #edefee;
+	padding: 1.5rem;
+	border-radius: 12px;
+	margin-bottom: 2rem;
+	text-align: left;
+}
+
+.reservation-details h2 {
+	font-family: 'Markazi Text', serif;
+	font-size: 1.5rem;
+	color: #495e57;
+	margin-bottom: 1rem;
+	text-align: center;
+}
+
+.details-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.detail-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid #ffffff;
+}
+
+.detail-item:last-child {
+	border-bottom: none;
+}
+
+.detail-item strong {
+	font-family: 'Karla', sans-serif;
+	font-weight: 700;
+	color: #495e57;
+}
+
+.detail-item span {
+	font-family: 'Karla', sans-serif;
+	color: #495e57;
+}
+
+.confirmation-actions {
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	margin-bottom: 2rem;
+}
+
+.btn-secondary {
+	background-color: transparent;
+	color: #495e57;
+	border: 2px solid #495e57;
+	padding: 12px 24px;
+	border-radius: 16px;
+	font-family: 'Karla', sans-serif;
+	font-weight: 700;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	text-decoration: none;
+	display: inline-block;
+}
+
+.btn-secondary:hover {
+	background-color: #495e57;
+	color: #ffffff;
+}
+
+.contact-info {
+	border-top: 1px solid #edefee;
+	padding-top: 1.5rem;
+}
+
+.contact-info h3 {
+	font-family: 'Karla', sans-serif;
+	font-size: 1.125rem;
+	color: #495e57;
+	margin-bottom: 0.5rem;
+}
+
+.contact-info p {
+	font-family: 'Karla', sans-serif;
+	color: #495e57;
+	margin: 0;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+	.confirmation-content {
+		margin: 0 20px;
+		padding: 1.5rem;
+	}
+
+	.confirmation-actions {
+		flex-direction: column;
+		align-items: center;
+	}
+
+	.detail-item {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.25rem;
+	}
+}
