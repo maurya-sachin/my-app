@@ -1,27 +1,36 @@
-// src/App.js 
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
+
 import Header from './components/Header';
+import Nav from './components/Nav';
+import Main from './components/Main';
 import Footer from './components/Footer';
-import HomePage from './components/HomePage';
-import BookingPage from './components/BookingPage';
-import ConfirmationPage from './components/ConfirmationPage';
+
+// Import pages
+import About from './pages/About';
+import Menu from './pages/Menu';
+import Reservations from './pages/Reservations';
+import OrderOnline from './pages/OrderOnline';
+import Login from './pages/Login';
+import Homepage from './pages/HomePage';
 
 function App() {
   return (
     <Router>
       <div className="App">
-        <a href="#main-content" className="skip-link">
-          Skip to main content
-        </a>
         <Header />
-        <main id="main-content" role="main">
+        <Nav />
+        <Main>
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/booking" element={<BookingPage />} />
-            <Route path="/confirmation" element={<ConfirmationPage />} />
+            <Route path="/" element={<Homepage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/menu" element={<Menu />} />
+            <Route path="/reservations" element={<Reservations />} />
+            <Route path="/order-online" element={<OrderOnline />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
-        </main>
+        </Main>
         <Footer />
       </div>
     </Router>
