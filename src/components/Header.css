@@ -1,0 +1,32 @@
+/* components/Header.css */
+.header {
+	background-color: var(--highlight-white);
+	padding: 20px 0;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.header .container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.logo-img {
+	height: 60px;
+	width: auto;
+	transition: transform 0.3s ease;
+}
+
+.logo-img:hover {
+	transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+	.logo-img {
+		height: 50px;
+	}
+
+	.header {
+		padding: 16px 0;
+	}
+}
