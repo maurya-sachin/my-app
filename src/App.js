@@ -1,18 +1,21 @@
-// src/App.js
+// src/App.js 
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import './styles/global.css';
+import './App.css';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import HomePage from './components/HomePage';
 import BookingPage from './components/BookingPage';
 import ConfirmationPage from './components/ConfirmationPage';
-import HomePage from './components/HomePage';
 
 function App() {
   return (
     <Router>
       <div className="App">
+        <a href="#main-content" className="skip-link">
+          Skip to main content
+        </a>
         <Header />
-        <main>
+        <main id="main-content" role="main">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/booking" element={<BookingPage />} />
