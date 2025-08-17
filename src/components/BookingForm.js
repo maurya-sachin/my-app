@@ -80,9 +80,21 @@ const BookingForm = ({ availableTimes, updateTimes, submitForm }) => {
     const today = new Date().toISOString().split('T')[0];
 
     return (
-        <form className="booking-form" onSubmit={handleSubmit}>
+        <form
+            className="booking-form"
+            onSubmit={handleSubmit}
+            aria-labelledby="booking-form-title"
+            noValidate
+        >
+            <h2 id="booking-form-title" className="sr-only">
+                Restaurant Reservation Form
+            </h2>
+
             <div className="form-group">
-                <label htmlFor="date">Choose date *</label>
+                <label htmlFor="date">
+                    Choose date *
+                    <span className="sr-only">(Required field)</span>
+                </label>
                 <input
                     type="date"
                     id="date"
@@ -91,24 +103,32 @@ const BookingForm = ({ availableTimes, updateTimes, submitForm }) => {
                     onChange={handleInputChange}
                     min={today}
                     required
-                    aria-describedby={errors.date ? "date-error" : undefined}
+                    aria-describedby={errors.date ? "date-error" : "date-help"}
+                    aria-invalid={errors.date ? 'true' : 'false'}
                 />
+                <span id="date-help" className="sr-only">
+                    Select a date for your reservation. Must be today or later.
+                </span>
                 {errors.date && (
-                    <span id="date-error" className="error-message" role="alert">
-                        {errors.date}
+                    <span id="date-error" className="error-message" role="alert" aria-live="polite">
+                        <span aria-hidden="true">⚠️</span> {errors.date}
                     </span>
                 )}
             </div>
 
             <div className="form-group">
-                <label htmlFor="time">Choose time *</label>
+                <label htmlFor="time">
+                    Choose time *
+                    <span className="sr-only">(Required field)</span>
+                </label>
                 <select
                     id="time"
                     name="time"
                     value={formData.time}
                     onChange={handleInputChange}
                     required
-                    aria-describedby={errors.time ? "time-error" : undefined}
+                    aria-describedby={errors.time ? "time-error" : "time-help"}
+                    aria-invalid={errors.time ? 'true' : 'false'}
                 >
                     <option value="">Select a time</option>
                     {availableTimes.map(time => (
@@ -117,15 +137,21 @@ const BookingForm = ({ availableTimes, updateTimes, submitForm }) => {
                         </option>
                     ))}
                 </select>
+                <span id="time-help" className="sr-only">
+                    Choose an available time slot for your reservation.
+                </span>
                 {errors.time && (
-                    <span id="time-error" className="error-message" role="alert">
-                        {errors.time}
+                    <span id="time-error" className="error-message" role="alert" aria-live="polite">
+                        <span aria-hidden="true">⚠️</span> {errors.time}
                     </span>
                 )}
             </div>
 
             <div className="form-group">
-                <label htmlFor="guests">Number of guests *</label>
+                <label htmlFor="guests">
+                    Number of guests *
+                    <span className="sr-only">(Required field, between 1 and 10)</span>
+                </label>
                 <input
                     type="number"
                     id="guests"
@@ -135,24 +161,32 @@ const BookingForm = ({ availableTimes, updateTimes, submitForm }) => {
                     min="1"
                     max="10"
                     required
-                    aria-describedby={errors.guests ? "guests-error" : undefined}
+                    aria-describedby={errors.guests ? "guests-error" : "guests-help"}
+                    aria-invalid={errors.guests ? 'true' : 'false'}
                 />
+                <span id="guests-help" className="sr-only">
+                    Enter number of guests, minimum 1, maximum 10.
+                </span>
                 {errors.guests && (
-                    <span id="guests-error" className="error-message" role="alert">
-                        {errors.guests}
+                    <span id="guests-error" className="error-message" role="alert" aria-live="polite">
+                        <span aria-hidden="true">⚠️</span> {errors.guests}
                     </span>
                 )}
             </div>
 
             <div className="form-group">
-                <label htmlFor="occasion">Occasion *</label>
+                <label htmlFor="occasion">
+                    Occasion *
+                    <span className="sr-only">(Required field)</span>
+                </label>
                 <select
                     id="occasion"
                     name="occasion"
                     value={formData.occasion}
                     onChange={handleInputChange}
                     required
-                    aria-describedby={errors.occasion ? "occasion-error" : undefined}
+                    aria-describedby={errors.occasion ? "occasion-error" : "occasion-help"}
+                    aria-invalid={errors.occasion ? 'true' : 'false'}
                 >
                     <option value="">Select an occasion</option>
                     <option value="Birthday">Birthday</option>
@@ -162,15 +196,21 @@ const BookingForm = ({ availableTimes, updateTimes, submitForm }) => {
                     <option value="Family Gathering">Family Gathering</option>
                     <option value="Other">Other</option>
                 </select>
+                <span id="occasion-help" className="sr-only">
+                    Select the type of occasion for your visit.
+                </span>
                 {errors.occasion && (
-                    <span id="occasion-error" className="error-message" role="alert">
-                        {errors.occasion}
+                    <span id="occasion-error" className="error-message" role="alert" aria-live="polite">
+                        <span aria-hidden="true">⚠️</span> {errors.occasion}
                     </span>
                 )}
             </div>
 
             <div className="form-group">
-                <label htmlFor="comments">Special requests</label>
+                <label htmlFor="comments">
+                    Special requests
+                    <span className="sr-only">(Optional field)</span>
+                </label>
                 <textarea
                     id="comments"
                     name="comments"
@@ -178,23 +218,37 @@ const BookingForm = ({ availableTimes, updateTimes, submitForm }) => {
                     onChange={handleInputChange}
                     rows="4"
                     placeholder="Any special dietary requirements or requests..."
+                    aria-describedby="comments-help"
                 />
+                <span id="comments-help" className="sr-only">
+                    Optional field for any special dietary requirements or seating preferences.
+                </span>
             </div>
 
-            <button
-                type="submit"
-                className="btn-primary"
-                disabled={isSubmitting}
-                aria-describedby="submit-help"
-            >
-                {isSubmitting ? 'Submitting...' : 'Make Your Reservation'}
-            </button>
+            <div className="form-actions">
+                <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={isSubmitting}
+                    aria-describedby="submit-help"
+                >
+                    <span aria-hidden="true">
+                        {isSubmitting ? '⏳' : '🍽️'}
+                    </span>
+                    {isSubmitting ? 'Submitting...' : 'Make Your Reservation'}
+                </button>
 
-            <p id="submit-help" className="form-help">
-                All fields marked with * are required
-            </p>
+                <div id="submit-help" className="form-help">
+                    <p>All fields marked with * are required</p>
+                    <p>You will receive a confirmation after submitting</p>
+                </div>
+            </div>
+
+            {/* Live region for form status announcements */}
+            <div aria-live="polite" aria-atomic="true" className="sr-only">
+                {isSubmitting && "Processing your reservation..."}
+            </div>
         </form>
     );
 };
-
 export default BookingForm;
