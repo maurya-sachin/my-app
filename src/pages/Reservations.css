@@ -1,0 +1,8 @@
+.reservations-page {
+	padding: 3rem 0;
+}
+
+.reservations-page h1 {
+	color: var(--primary-green);
+	margin-bottom: 2rem;
+}
