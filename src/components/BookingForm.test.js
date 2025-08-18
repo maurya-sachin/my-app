@@ -9,6 +9,8 @@ describe('BookingForm', () => {
     beforeEach(() => {
         mockDispatch.mockClear();
         mockSubmitForm.mockClear();
+        mockSubmitForm.mockReturnValue(true);
+        jest.clearAllMocks();
     });
 
     test('renders booking form', () => {
@@ -69,7 +71,7 @@ describe('BookingForm', () => {
 
         const timeSelect = screen.getByLabelText(/choose time/i);
         mockAvailableTimes.forEach(time => {
-            expect(screen.getByDisplayValue(time)).toBeInTheDocument();
+            expect(screen.getByRole('option', { name: time })).toBeInTheDocument();
         });
     });
 
@@ -89,5 +91,28 @@ describe('BookingForm', () => {
         fireEvent.click(submitButton);
 
         expect(mockSubmitForm).not.toHaveBeenCalled();
+    });
+
+    test('submits form with valid data', () => {
+        render(
+            <BookingForm
+                availableTimes={mockAvailableTimes}
+                dispatch={mockDispatch}
+                submitForm={mockSubmitForm}
+            />
+        );
+
+        fireEvent.change(screen.getByLabelText(/choose date/i), { target: { value: '2024-12-25' } });
+        fireEvent.change(screen.getByLabelText(/choose time/i), { target: { value: '18:00' } });
+        fireEvent.change(screen.getByLabelText(/first name/i), { target: { value: 'John' } });
+        fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: 'Doe' } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'john@example.com' } });
+        fireEvent.change(screen.getByLabelText(/phone/i), { target: { value: '1234567890' } });
+
+        const submitButton = screen.getByRole('button', { name: /make your reservation/i });
+        fireEvent.click(submitButton);
+
+        expect(mockSubmitForm).toHaveBeenCalled();
+        expect(global.alert).toHaveBeenCalledWith('Reservation confirmed!');
     });
 });
