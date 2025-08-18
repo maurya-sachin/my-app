@@ -9,6 +9,25 @@ const BookingPageWithRouter = () => (
 );
 
 describe('BookingPage', () => {
+    const mockFetchAPI = jest.fn();
+    const mockSubmitAPI = jest.fn();
+
+    beforeEach(() => {
+        mockFetchAPI.mockClear();
+        mockSubmitAPI.mockClear();
+
+        window.fetchAPI = mockFetchAPI;
+        window.submitAPI = mockSubmitAPI;
+
+        mockFetchAPI.mockReturnValue(['17:00', '18:00', '19:00', '20:00', '21:00', '22:00']);
+        mockSubmitAPI.mockReturnValue(true);
+    });
+
+    afterEach(() => {
+        delete window.fetchAPI;
+        delete window.submitAPI;
+    });
+
     test('renders booking page', () => {
         render(<BookingPageWithRouter />);
         expect(screen.getByText(/reserve a table/i)).toBeInTheDocument();
@@ -20,14 +39,17 @@ describe('BookingPage', () => {
         expect(screen.getByLabelText(/choose time/i)).toBeInTheDocument();
     });
 
-    test('initializeTimes returns available times', () => {
+    test('initializeTimes calls fetchAPI with today date', () => {
+        const times = initializeTimes();
+        expect(mockFetchAPI).toHaveBeenCalledWith(expect.any(Date));
+        expect(Array.isArray(times)).toBe(true);
+    });
+
+    test('initializeTimes returns fallback when no API', () => {
+        delete window.fetchAPI;
         const times = initializeTimes();
         expect(Array.isArray(times)).toBe(true);
-        expect(times.length).toBeGreaterThan(0);
-        times.forEach(time => {
-            expect(typeof time).toBe('string');
-            expect(time).toMatch(/^\d{2}:\d{2}$/);
-        });
+        expect(times).toEqual(['17:00', '18:00', '19:00', '20:00', '21:00', '22:00']);
     });
 
     test('updateTimes returns same state for unknown action', () => {
@@ -37,17 +59,26 @@ describe('BookingPage', () => {
         expect(newState).toEqual(initialState);
     });
 
-    test('updateTimes returns new times for UPDATE_TIMES action', () => {
+    test('updateTimes calls fetchAPI for UPDATE_TIMES action', () => {
         const initialState = ['17:00', '18:00'];
         const action = { type: 'UPDATE_TIMES', date: '2024-12-25' };
         const newState = updateTimes(initialState, action);
+
+        expect(mockFetchAPI).toHaveBeenCalledWith(new Date('2024-12-25'));
         expect(Array.isArray(newState)).toBe(true);
-        expect(newState.length).toBeGreaterThan(0);
     });
 
     test('updateTimes returns same state when no date provided', () => {
         const initialState = ['17:00', '18:00'];
         const action = { type: 'UPDATE_TIMES' };
+        const newState = updateTimes(initialState, action);
+        expect(newState).toEqual(initialState);
+    });
+
+    test('updateTimes returns fallback when no API', () => {
+        delete window.fetchAPI;
+        const initialState = ['17:00', '18:00'];
+        const action = { type: 'UPDATE_TIMES', date: '2024-12-25' };
         const newState = updateTimes(initialState, action);
         expect(newState).toEqual(initialState);
     });
