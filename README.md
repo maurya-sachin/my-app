@@ -1,70 +1,202 @@
-# Getting Started with Create React App
+# Little Lemon Restaurant - Meta Frontend Developer Capstone
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern, responsive React application for Little Lemon, a family-owned Mediterranean restaurant in Chicago.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Responsive Design**: Fully responsive design that works on desktop, tablet, and mobile devices
+- **Modern UI**: Clean, modern interface following the Little Lemon brand guidelines
+- **Table Reservations**: Complete booking system with form validation and time availability
+- **Menu Showcase**: Display of weekly specials with images and descriptions
+- **Customer Testimonials**: Reviews section showcasing customer feedback
+- **About Section**: Information about the restaurant and founders
+- **Navigation**: Smooth navigation with active link highlighting
+- **Accessibility**: Semantic HTML and proper ARIA labels
 
-### `npm start`
+## Tech Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **React 18**: Modern React with functional components and hooks
+- **React Router**: Client-side routing for navigation
+- **CSS3**: Custom CSS with Flexbox and Grid layouts
+- **Google Fonts**: Markazi Text and Karla font families
+- **Jest & React Testing Library**: Unit and integration testing
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Project Structure
 
-### `npm test`
+```
+src/
+├── components/
+│   ├── Header.js
+│   ├── Hero.js
+│   ├── Specials.js
+│   ├── Testimonials.js
+│   ├── About.js
+│   ├── Footer.js
+│   ├── Homepage.js
+│   ├── BookingForm.js
+│   ├── BookingPage.js
+│   └── *.test.js
+├── App.js
+├── index.js
+└── index.css
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `npm run build`
+### Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Node.js (version 14 or higher)
+- npm or yarn package manager
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Installation
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository
 
-### `npm run eject`
+```bash
+git clone <repository-url>
+cd little-lemon-restaurant
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Install dependencies
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```bash
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Add your assets to the `public/assets/images/` directory:
+   - Logo.png
+   - restauranfood.jpg
+   - greek salad.jpg
+   - bruchetta.svg
+   - lemon dessert.jpg
+   - Mario and Adrian A.jpg
+   - Mario and Adrian b.jpg
+   - restaurant.jpg
+   - restaurant chef B.jpg
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+4. Start the development server
 
-## Learn More
+```bash
+npm start
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. Open [http://localhost:3000](http://localhost:3000) to view it in your browser
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Running Tests
 
-### Code Splitting
+```bash
+npm test
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Building for Production
 
-### Analyzing the Bundle Size
+```bash
+npm run build
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Git Workflow - Staged Commits
 
-### Making a Progressive Web App
+The project was developed in stages with specific commits for each feature:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Stage 1: Project Setup
 
-### Advanced Configuration
+```bash
+git add package.json public/index.html README.md
+git commit -m "Stage 1: Initial project setup with dependencies and HTML structure"
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Stage 2: Base Styling and Layout
 
-### Deployment
+```bash
+git add src/index.css
+git commit -m "Stage 2: Complete CSS styling system with responsive design"
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Stage 3: Core Components
 
-### `npm run build` fails to minify
+```bash
+git add src/App.js src/index.js src/components/Header.js src/components/Footer.js
+git commit -m "Stage 3: Core app structure with header and footer components"
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Stage 4: Homepage Sections
+
+```bash
+git add src/components/Hero.js src/components/Specials.js src/components/About.js src/components/Homepage.js
+git commit -m "Stage 4: Homepage sections - hero, specials, and about components"
+```
+
+### Stage 5: Testimonials
+
+```bash
+git add src/components/Testimonials.js
+git commit -m "Stage 5: Customer testimonials section with review cards"
+```
+
+### Stage 6: Booking System
+
+```bash
+git add src/components/BookingForm.js src/components/BookingPage.js
+git commit -m "Stage 6: Complete reservation system with form validation"
+```
+
+### Stage 7: Testing
+
+```bash
+git add src/App.test.js src/components/BookingForm.test.js src/components/BookingPage.test.js
+git commit -m "Stage 7: Comprehensive test suite for components and functionality"
+```
+
+### Stage 8: Final Polish
+
+```bash
+git add .
+git commit -m "Stage 8: Final optimizations, accessibility improvements, and documentation"
+```
+
+## Key Features Implemented
+
+### Responsive Navigation
+
+- Mobile-friendly hamburger menu
+- Active link highlighting
+- Smooth scrolling to sections
+
+### Reservation System
+
+- Dynamic time slot generation based on selected date
+- Form validation with error handling
+- Reducer pattern for state management
+- Accessible form controls
+
+### Design System
+
+- Consistent color palette (#49SE57 green, #F4CE14 yellow)
+- Typography hierarchy (Markazi Text, Karla)
+- 16px border radius throughout
+- Hover effects and transitions
+
+### Performance
+
+- Optimized images and assets
+- Efficient React rendering
+- Mobile-first responsive design
+
+## Browser Support
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/new-feature`)
+3. Commit your changes (`git commit -m 'Add new feature'`)
+4. Push to the branch (`git push origin feature/new-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is part of the Meta Frontend Developer Certificate program.
