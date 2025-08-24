@@ -1,8 +1,9 @@
+// BookingPage.test.js
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import BookingPage, { initializeTimes, updateTimes } from './BookingPage';
 
-// Mock the API functions for testing
 window.fetchAPI = jest.fn(() => ['17:00', '18:00', '19:00', '20:00', '21:00', '22:00']);
 window.submitAPI = jest.fn(() => true);
 
@@ -22,18 +23,23 @@ describe('BookingPage', () => {
         expect(screen.getByText(/reserve a table/i)).toBeInTheDocument();
     });
 
-    test('renders booking form', () => {
+    test('renders booking form elements', () => {
         render(<BookingPageWithRouter />);
         expect(screen.getByLabelText(/choose date/i)).toBeInTheDocument();
         expect(screen.getByLabelText(/choose time/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/number of guests/i)).toBeInTheDocument();
+        expect(screen.getByLabelText(/occasion/i)).toBeInTheDocument();
     });
 
+    // ---- initializeTimes ----
     test('initializeTimes calls fetchAPI with today\'s date', () => {
         const times = initializeTimes();
         expect(window.fetchAPI).toHaveBeenCalledWith(expect.any(Date));
         expect(Array.isArray(times)).toBe(true);
+        expect(times).toEqual(expect.arrayContaining(['17:00', '18:00']));
     });
 
+    // ---- updateTimes ----
     test('updateTimes returns same state for unknown action', () => {
         const initialState = ['17:00', '18:00'];
         const action = { type: 'UNKNOWN_ACTION' };
@@ -55,5 +61,28 @@ describe('BookingPage', () => {
         const action = { type: 'UPDATE_TIMES' };
         const newState = updateTimes(initialState, action);
         expect(newState).toEqual(initialState);
+    });
+
+    // ---- form submission ----
+    test('submits booking form and calls submitAPI', async () => {
+        render(<BookingPageWithRouter />);
+        const user = userEvent.setup();
+
+        // Fill form
+        await user.type(screen.getByLabelText(/choose date/i), '2025-08-25');
+        await user.selectOptions(screen.getByLabelText(/choose time/i), '18:00');
+        await user.clear(screen.getByLabelText(/number of guests/i));
+        await user.type(screen.getByLabelText(/number of guests/i), '2');
+        await user.selectOptions(screen.getByLabelText(/occasion/i), 'Birthday');
+
+        // Submit form
+        await user.click(screen.getByRole('button', { name: /submit/i }));
+
+        expect(window.submitAPI).toHaveBeenCalledWith(expect.objectContaining({
+            date: '2025-08-25',
+            time: '18:00',
+            guests: '2',
+            occasion: 'Birthday'
+        }));
     });
 });

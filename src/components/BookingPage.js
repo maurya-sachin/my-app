@@ -9,7 +9,6 @@ const fallbackTimes = ["17:00", "18:00", "19:00", "20:00", "21:00", "22:00"];
 const waitForAPI = (maxWait = 5000) => {
     return new Promise((resolve) => {
         const startTime = Date.now();
-
         const checkAPI = () => {
             if (window.fetchAPI && window.submitAPI) {
                 resolve(true);
@@ -20,7 +19,6 @@ const waitForAPI = (maxWait = 5000) => {
                 setTimeout(checkAPI, 100);
             }
         };
-
         checkAPI();
     });
 };
@@ -52,7 +50,6 @@ export const updateTimes = (state, action) => {
                         console.warn("Invalid date provided:", action.date);
                         return state;
                     }
-
                     if (window.fetchAPI) {
                         const times = window.fetchAPI(selectedDate);
                         return times && times.length > 0 ? times : fallbackTimes;
@@ -76,10 +73,13 @@ const BookingPage = () => {
     const [availableTimes, dispatch] = useReducer(updateTimes, fallbackTimes);
     const [apiReady, setApiReady] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const [bookings, setBookings] = useState([]); // store reservations
+    const [bookings, setBookings] = useState(() => {
+        const stored = localStorage.getItem("bookings");
+        return stored ? JSON.parse(stored) : [];
+    });
     const [confirmedBooking, setConfirmedBooking] = useState(null); // last confirmed booking
 
-    // 👇 Attach functions from api.js (if available) to window
+    // Ensure APIs exist on window
     useEffect(() => {
         if (typeof window.fetchAPI === "undefined" && typeof fetchAPI !== "undefined") {
             window.fetchAPI = fetchAPI;
@@ -89,7 +89,7 @@ const BookingPage = () => {
         }
     }, []);
 
-    // 👇 Wait for API, then initialize times
+    // Initialize API + times
     useEffect(() => {
         const initializeAPI = async () => {
             const apiLoaded = await waitForAPI();
@@ -99,16 +99,27 @@ const BookingPage = () => {
                 const times = initializeTimes();
                 dispatch({ type: "INITIALIZE_TIMES", times });
             }
-
             setIsLoading(false);
         };
-
         initializeAPI();
     }, []);
 
+    // Load bookings from localStorage
+    useEffect(() => {
+        const stored = localStorage.getItem("bookings");
+        if (stored) {
+            setBookings(JSON.parse(stored));
+        }
+    }, []);
+
+    // Save bookings to localStorage
+    useEffect(() => {
+        localStorage.setItem("bookings", JSON.stringify(bookings));
+    }, [bookings]);
+
+    // Submit form
     const submitForm = (formData) => {
         let success = false;
-
         if (window.submitAPI) {
             try {
                 success = window.submitAPI(formData);
@@ -124,10 +135,9 @@ const BookingPage = () => {
 
         if (success) {
             const newBooking = { ...formData, status: "Confirmed" };
-            setBookings((prev) => [...prev, newBooking]); // add to bookings table
+            setBookings((prev) => [...prev, newBooking]); // update table
             setConfirmedBooking(newBooking); // show confirmation
         }
-
         return success;
     };
 
