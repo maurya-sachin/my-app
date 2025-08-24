@@ -1,6 +1,9 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import BookingForm from './BookingForm';
 
+// Mock the API functions for testing
+window.submitAPI = jest.fn(() => true);
+
 const mockAvailableTimes = ['17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
 const mockDispatch = jest.fn();
 const mockSubmitForm = jest.fn();
@@ -114,5 +117,36 @@ describe('BookingForm', () => {
 
         expect(mockSubmitForm).toHaveBeenCalled();
         expect(global.alert).toHaveBeenCalledWith('Reservation confirmed!');
+    });
+
+    test('integrates with API submitForm function', () => {
+        const realSubmitForm = (formData) => window.submitAPI(formData);
+
+        render(
+            <BookingForm
+                availableTimes={mockAvailableTimes}
+                dispatch={mockDispatch}
+                submitForm={realSubmitForm}
+            />
+        );
+
+        fireEvent.change(screen.getByLabelText(/choose date/i), { target: { value: '2024-12-25' } });
+        fireEvent.change(screen.getByLabelText(/choose time/i), { target: { value: '18:00' } });
+        fireEvent.change(screen.getByLabelText(/first name/i), { target: { value: 'John' } });
+        fireEvent.change(screen.getByLabelText(/last name/i), { target: { value: 'Doe' } });
+        fireEvent.change(screen.getByLabelText(/email/i), { target: { value: 'john@example.com' } });
+        fireEvent.change(screen.getByLabelText(/phone/i), { target: { value: '1234567890' } });
+
+        const submitButton = screen.getByRole('button', { name: /make your reservation/i });
+        fireEvent.click(submitButton);
+
+        expect(window.submitAPI).toHaveBeenCalledWith(expect.objectContaining({
+            date: '2024-12-25',
+            time: '18:00',
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john@example.com',
+            phone: '1234567890'
+        }));
     });
 });

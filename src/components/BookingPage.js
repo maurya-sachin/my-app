@@ -1,136 +1,158 @@
-import React, { useReducer, useState } from 'react';
+/* global fetchAPI, submitAPI */
+import React, { useReducer, useState, useEffect } from 'react';
 import BookingForm from './BookingForm';
-import BookingTable from './BookingTable';
 
-const seededRandom = function (seed) {
-    var m = 2 ** 35 - 31;
-    var a = 185852;
-    var s = seed % m;
-    return function () {
-        return (s = s * a % m) / m;
-    };
-}
+// Fallback times in case API is not available
+const fallbackTimes = ['17:00', '18:00', '19:00', '20:00', '21:00', '22:00'];
 
-const fetchAPI = function (date) {
-    let result = [];
-    let random = seededRandom(date.getDate());
+const waitForAPI = (maxWait = 5000) => {
+    return new Promise((resolve) => {
+        const startTime = Date.now();
 
-    for (let i = 17; i <= 23; i++) {
-        if (random() < 0.5) {
-            result.push(i + ':00');
-        }
-        if (random() < 0.5) {
-            result.push(i + ':30');
-        }
-    }
-    return result;
+        const checkAPI = () => {
+            if (window.fetchAPI && window.submitAPI) {
+                resolve(true);
+            } else if (Date.now() - startTime > maxWait) {
+                console.warn('External API not loaded within timeout, using fallback');
+                resolve(false);
+            } else {
+                setTimeout(checkAPI, 100);
+            }
+        };
+
+        checkAPI();
+    });
 };
 
-const submitAPI = function (formData) {
-    return true;
-};
-
+// Initialize times using fetchAPI for today's date
 export const initializeTimes = () => {
     const today = new Date();
-    return fetchAPI(today);
+    if (window.fetchAPI) {
+        try {
+            const times = window.fetchAPI(today);
+            return times && times.length > 0 ? times : fallbackTimes;
+        } catch (error) {
+            console.warn('Error calling fetchAPI, using fallback times:', error);
+            return fallbackTimes;
+        }
+    }
+    console.warn('fetchAPI not available, using fallback times');
+    return fallbackTimes;
 };
 
+// Reducer to update times
 export const updateTimes = (state, action) => {
     switch (action.type) {
         case 'UPDATE_TIMES':
             if (action.date) {
-                const selectedDate = new Date(action.date);
-                return fetchAPI(selectedDate);
+                try {
+                    const selectedDate = new Date(action.date);
+                    if (isNaN(selectedDate.getTime())) {
+                        console.warn('Invalid date provided:', action.date);
+                        return state;
+                    }
+
+                    if (window.fetchAPI) {
+                        const times = window.fetchAPI(selectedDate);
+                        return times && times.length > 0 ? times : fallbackTimes;
+                    }
+                    console.warn('fetchAPI not available, using fallback times');
+                    return fallbackTimes;
+                } catch (error) {
+                    console.warn('Error updating times:', error);
+                    return state;
+                }
             }
             return state;
+        case 'INITIALIZE_TIMES':
+            return action.times || fallbackTimes;
         default:
             return state;
     }
 };
 
-const initialBookingData = [
-    {
-        date: '2024-08-20',
-        time: '18:00',
-        guests: 4,
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@email.com',
-        phone: '(555) 123-4567',
-        occasion: 'Anniversary',
-        status: 'confirmed'
-    },
-    {
-        date: '2024-08-22',
-        time: '19:30',
-        guests: 2,
-        firstName: 'Sarah',
-        lastName: 'Johnson',
-        email: 'sarah.j@email.com',
-        phone: '(555) 987-6543',
-        occasion: 'Birthday',
-        status: 'confirmed'
-    },
-    {
-        date: '2024-08-25',
-        time: '20:00',
-        guests: 6,
-        firstName: 'Mike',
-        lastName: 'Chen',
-        email: 'mike.chen@email.com',
-        phone: '(555) 456-7890',
-        occasion: 'Business',
-        status: 'pending'
-    }
-];
-
 const BookingPage = () => {
-    const [availableTimes, dispatch] = useReducer(updateTimes, [], initializeTimes);
-    const [bookingData, setBookingData] = useState(initialBookingData);
+    const [availableTimes, dispatch] = useReducer(updateTimes, fallbackTimes);
+    const [apiReady, setApiReady] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    // 👇 Attach functions from api.js (if available) to window
+    useEffect(() => {
+        if (typeof window.fetchAPI === "undefined" && typeof fetchAPI !== "undefined") {
+            window.fetchAPI = fetchAPI;
+        }
+        if (typeof window.submitAPI === "undefined" && typeof submitAPI !== "undefined") {
+            window.submitAPI = submitAPI;
+        }
+    }, []);
+
+    // 👇 Wait for API, then initialize times
+    useEffect(() => {
+        const initializeAPI = async () => {
+            const apiLoaded = await waitForAPI();
+            setApiReady(apiLoaded);
+
+            if (apiLoaded) {
+                const times = initializeTimes();
+                dispatch({ type: 'INITIALIZE_TIMES', times });
+            }
+
+            setIsLoading(false);
+        };
+
+        initializeAPI();
+    }, []);
 
     const submitForm = (formData) => {
-        const success = submitAPI(formData);
-        if (success) {
-            const newBooking = {
-                ...formData,
-                status: 'confirmed'
-            };
-            setBookingData(prev => [...prev, newBooking]);
+        if (window.submitAPI) {
+            try {
+                const result = window.submitAPI(formData);
+                console.log('Form submitted successfully:', result);
+                return result;
+            } catch (error) {
+                console.warn('Error submitting form:', error);
+                return false;
+            }
         }
-        return success;
+        console.warn('submitAPI not available, using fallback');
+        console.log('Form submitted (fallback):', formData);
+        return true;
     };
 
-    const confirmedBookings = bookingData.filter(booking => booking.status === 'confirmed').length;
-    const pendingBookings = bookingData.filter(booking => booking.status === 'pending').length;
-    const totalBookings = bookingData.length;
+    if (isLoading) {
+        return (
+            <section className="reservation">
+                <div className="container">
+                    <h2>Reserve a Table</h2>
+                    <p>Loading available times...</p>
+                </div>
+            </section>
+        );
+    }
 
     return (
         <section className="reservation">
             <div className="container">
                 <h2>Reserve a Table</h2>
-
-                <div className="booking-summary">
-                    <div className="summary-card">
-                        <h4>Total Reservations</h4>
-                        <div className="number">{totalBookings}</div>
+                {!apiReady && (
+                    <div
+                        style={{
+                            backgroundColor: '#fff3cd',
+                            color: '#856404',
+                            padding: '10px',
+                            marginBottom: '20px',
+                            borderRadius: '5px',
+                            border: '1px solid #ffeaa7',
+                        }}
+                    >
+                        <small>⚠️ Note: Using fallback booking system (API not available)</small>
                     </div>
-                    <div className="summary-card">
-                        <h4>Confirmed</h4>
-                        <div className="number">{confirmedBookings}</div>
-                    </div>
-                    <div className="summary-card">
-                        <h4>Pending</h4>
-                        <div className="number">{pendingBookings}</div>
-                    </div>
-                </div>
-
+                )}
                 <BookingForm
                     availableTimes={availableTimes}
                     dispatch={dispatch}
                     submitForm={submitForm}
                 />
-
-                <BookingTable bookingData={bookingData} />
             </div>
         </section>
     );
